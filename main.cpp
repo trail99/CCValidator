@@ -1,12 +1,14 @@
 #include <iostream>
+#include <string>
+#include <math.h>
 
 int numLen(int n) {
   int count = 0;
   while (n != 0) {
-    n = n / 10;
     count++;
+    n = n / 10;
   }
-  return count+1;
+  return count + 1;
 }
 
 // Iterates through the number digit by digit and inserts at end
@@ -54,13 +56,19 @@ int main() {
 
   // Holds the credit card number to be verfied //
   unsigned long long number = 79927398713;
-
+  std::string init = " ";
   int noOfDigits = numLen(number);
-  int numArray[noOfDigits];
+  long long divisor = pow(10, (noOfDigits - 1));
+  init = number / divisor;
+  //std::cout<<init;
+ 
+  int numArray[noOfDigits]  = {0};
   int luhnArray[noOfDigits] = {0};
+  
   fillNumArray(numArray, number, noOfDigits);
 
   bool isValid = luhn(luhnArray, numArray, number, noOfDigits);
+  
   if(isValid) std::cout<<"\n Credit Card is Valid";
   else std::cout<<"\n You're a fraud!";
 
