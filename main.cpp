@@ -1,8 +1,6 @@
 #include <iostream>
-#include <string>
 #include <math.h>
 #include <stdlib.h>
-#include <sstream>
 
 int numLen(unsigned long long n) {
   int count = 0;
