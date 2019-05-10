@@ -1,14 +1,16 @@
 #include <iostream>
 #include <string>
 #include <math.h>
+#include <stdlib.h>
+#include <sstream>
 
-int numLen(int n) {
+int numLen(unsigned long long n) {
   int count = 0;
   while (n != 0) {
     count++;
     n = n / 10;
   }
-  return count + 1;
+  return count;
 }
 
 // Iterates through the number digit by digit and inserts at end
@@ -42,7 +44,7 @@ bool luhn(int lArray[], int Array[], int num, int n) {
     lArray[i] = Array[i] * 2;
     if(numLen(lArray[i] >= 2)) addBits(lArray, lArray[i], i);
   }
-
+  
   for(int i = 0; i < n; ++i) {
     if(lArray[i] == 0) lArray[i] = Array[i];
   }
@@ -52,25 +54,55 @@ bool luhn(int lArray[], int Array[], int num, int n) {
 
 }
 
-int main() {
+int getStartDigits(unsigned long long num, unsigned long long div) {
+  int digits;
+  digits = num / div;
+  if(digits == 3) {
+    div = pow(10, ((numLen(num)) - 2));
+    digits = num / div;
+  }
+  return digits; 
+}
 
+int main(int argc, char** argv) {
+  
+  char* pend;
   // Holds the credit card number to be verfied //
-  unsigned long long number = 79927398713;
-  std::string init = " ";
+  //unsigned long long number = 79927398713; //379927398713 //
+  unsigned long long number = std::strtoull(argv[1], &pend, 10);
   int noOfDigits = numLen(number);
-  long long divisor = pow(10, (noOfDigits - 1));
-  init = number / divisor;
-  //std::cout<<init;
- 
+  unsigned long long divisor = pow(10, (noOfDigits - 1));
+  
+  // Card Number Length Check //
+  if(noOfDigits < 10 || noOfDigits > 16) {
+    std::cout<<"\n Card Length Error! \n";
+    exit(0);
+  }
+
+  // Gets the starting digits (1 or 2) from the number 
+  // for the identification of the card //
+  int digits = getStartDigits(number, divisor);
   int numArray[noOfDigits]  = {0};
   int luhnArray[noOfDigits] = {0};
-  
+ 
+  //std::cout << digits;
+  // Fill the array with each digit of the number //
   fillNumArray(numArray, number, noOfDigits);
 
+  // Check whether the card is valid or not //
   bool isValid = luhn(luhnArray, numArray, number, noOfDigits);
-  
-  if(isValid) std::cout<<"\n Credit Card is Valid";
-  else std::cout<<"\n You're a fraud!";
+
+  if(isValid) {
+    if(digits == 4)
+      std::cout << "\n Your Visa card is valid!";
+    else if(digits == 5)
+      std::cout << "\n Your MasterCard card is valid!";
+    else if(digits == 37)
+      std::cout << "\n Your American Express card is valid!";
+    else if(digits == 6)
+      std::cout << "\n Your Discover card is valid!";
+    else std::cout << "\n Card is valid but not recognized!";
+  } else std::cout << "\n You're a fraud!";
 
   return 0;
 
